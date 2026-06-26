@@ -1,0 +1,10 @@
+target/
+.git/
+.idea/
+*.iml
+ALL_FILES/
+*_rebuilt/
+*.log
+README.md
+EXPLAINER.md
+HANDOFF.md
