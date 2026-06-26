@@ -2,6 +2,7 @@ package com.example.authswitch.iso;
 
 import com.example.authswitch.service.AuthorizationService;
 import jakarta.annotation.PreDestroy;
+import java.io.IOException;
 import org.jpos.iso.ISOPackager;
 import org.jpos.iso.ISOServer;
 import org.jpos.iso.ServerChannel;
@@ -47,16 +48,20 @@ public class IsoServer {
             log.info("ISO server disabled (iso.server.enabled=false)");
             return;
         }
-        ISOPackager packager = new ISO87APackager();
-        ServerChannel channel = new ASCIIChannel(packager);
-        server = new ISOServer(port, channel, null);
-        server.addISORequestListener(
-                new AuthorizationRequestListener(authorizationService, isoMessageService));
+        try {
+            ISOPackager packager = new ISO87APackager();
+            ServerChannel channel = new ASCIIChannel(packager);
+            server = new ISOServer(port, channel, null);
+            server.addISORequestListener(
+                    new AuthorizationRequestListener(authorizationService, isoMessageService));
 
-        Thread t = new Thread(server, "iso-server");
-        t.setDaemon(true);
-        t.start();
-        log.info("ISO 8583 server listening on port {}", port);
+            Thread t = new Thread(server, "iso-server");
+            t.setDaemon(true);
+            t.start();
+            log.info("ISO 8583 server listening on port {}", port);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to start ISO 8583 server on port " + port, e);
+        }
     }
 
     @PreDestroy
