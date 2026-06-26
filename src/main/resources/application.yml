@@ -1,6 +1,8 @@
 server:
   # Hugging Face / Railway / Fly inject the public port via $PORT; default 8080 locally.
   port: ${PORT:8080}
+  # Behind Railway/Fly's HTTPS proxy: honor X-Forwarded-* so Swagger builds https URLs.
+  forward-headers-strategy: framework
 
 spring:
   application:
